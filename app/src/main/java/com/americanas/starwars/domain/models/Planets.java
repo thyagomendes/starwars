@@ -12,13 +12,13 @@ import lombok.Data;
 public class Planets {
 
 	@Id
-	private Long id;
+	private String id;
 	@NotNull
-	private Long swapi_id;
+	private int swapi_id;
 	@NotNull
 	private String name;
 	@NotNull
 	private String climate;
 	@NotNull
-	private String ground;
+	private String terrain;
 }
