@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.americanas.starwars.domain.models.Planets;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class PlanetsService {
@@ -17,5 +18,9 @@ public class PlanetsService {
 	
 	public Flux<Planets> findAll( Pageable pageable){
 		return template.findAll(Planets.class);
+	}
+	
+	public Mono<Planets> findById(String id){
+		return template.findById(id, Planets.class);
 	}
 }
