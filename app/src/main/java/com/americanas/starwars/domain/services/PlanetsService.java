@@ -3,9 +3,12 @@ package com.americanas.starwars.domain.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.americanas.starwars.domain.models.Planets;
+import com.americanas.starwars.domain.repositories.PlanetsRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,13 +17,21 @@ import reactor.core.publisher.Mono;
 public class PlanetsService {
 
 	@Autowired
-    ReactiveMongoTemplate template;
+	PlanetsRepository planetsRepository;
 	
-	public Flux<Planets> findAll( Pageable pageable){
-		return template.findAll(Planets.class);
+	public Flux<Planets> findAll(){
+		return planetsRepository.findAll();
 	}
 	
 	public Mono<Planets> findById(String id){
-		return template.findById(id, Planets.class);
+		return planetsRepository.findById(id);
+	}
+	
+	public Mono<Planets> create(Planets planet){
+		return planetsRepository.save(planet);
+	}
+	
+	public Mono<Void> delete(String id){
+		return planetsRepository.deleteById(id);
 	}
 }
