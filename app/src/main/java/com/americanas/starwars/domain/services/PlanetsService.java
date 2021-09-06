@@ -35,10 +35,9 @@ public class PlanetsService {
 	public Mono<PlanetsModel> findById(String id){
 		return planetsRepository.findById(id)
 				.map(AppUtils::entityToModel)
-				.doOnNext(p -> p.setFilmsCount(findPlanetsSwapi(p.getSwapi_id())
-						.block()
-						.getFilms()
-						.size()));
+				.flatMap(planetsModel -> findPlanetsSwapi(planetsModel.getSwapi_id())
+						.doOnNext(planetsSwApi -> planetsModel.setFilmsCount(planetsSwApi.getFilms().size()))
+						.map(planetsSwApi -> planetsModel ));
 	}
 	
 	public Flux<PlanetsResumeModel> findByName(String name){
@@ -55,7 +54,7 @@ public class PlanetsService {
 	public Mono<PlanetsResumeModel> update(Mono<PlanetsResumeModel> planetResumeModel, String id){
 		return planetsRepository.findById(id)
 				.flatMap(p -> planetResumeModel.map(AppUtils::resumeModelToEntity)
-						.doOnNext(e -> e.setId(id)))
+						.doOnNext(planets -> planets.setId(id)))
 				.flatMap(planetsRepository::save)
 				.map(AppUtils::entityToResumeModel);
 	}
