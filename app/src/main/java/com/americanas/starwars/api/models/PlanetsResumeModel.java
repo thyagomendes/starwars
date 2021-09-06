@@ -10,12 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor  
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PlanetsModel {
+public class PlanetsResumeModel {
 
 	private String id;
 	private int swapi_id;
 	private String name;
 	private String climate;
 	private String terrain;
-	private int filmsCount;
 }

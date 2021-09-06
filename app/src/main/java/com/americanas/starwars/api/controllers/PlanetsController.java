@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.americanas.starwars.api.models.PlanetsModel;
+import com.americanas.starwars.api.models.PlanetsResumeModel;
 import com.americanas.starwars.domain.services.PlanetsService;
 
 import reactor.core.publisher.Flux;
@@ -26,9 +29,14 @@ public class PlanetsController {
 	@Autowired
 	PlanetsService planetsService;
 	
-	@GetMapping
-	public Flux<PlanetsModel> findAll() {
+	@GetMapping("/")
+	public Flux<PlanetsResumeModel> findAll() {
 		return planetsService.findAll();
+	}
+	
+	@GetMapping(params = "search")
+	public Flux<PlanetsResumeModel> findByName(@RequestParam("search") String search) {
+		return planetsService.findByName(search);
 	}
 	
 	@GetMapping("/{id}")
@@ -38,13 +46,13 @@ public class PlanetsController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Mono<PlanetsModel> create(@RequestBody Mono<PlanetsModel> planetModel){
+	public Mono<PlanetsResumeModel> create(@RequestBody Mono<PlanetsResumeModel> planetModel){
 		return planetsService.create(planetModel);
 	}
 	
 	@PutMapping("/{id}")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Mono<PlanetsModel> update(@RequestBody Mono<PlanetsModel> planetModel, @PathVariable String id){
+	public Mono<PlanetsResumeModel> update(@RequestBody Mono<PlanetsResumeModel> planetModel, @PathVariable String id){
 		return planetsService.update(planetModel, id);
 	}
 	

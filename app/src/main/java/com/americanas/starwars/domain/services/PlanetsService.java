@@ -1,9 +1,14 @@
 package com.americanas.starwars.domain.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.americanas.starwars.api.models.PlanetsModel;
+import com.americanas.starwars.api.models.PlanetsResumeModel;
+import com.americanas.starwars.api.models.PlanetsSwapiModel;
 import com.americanas.starwars.api.utils.AppUtils;
 import com.americanas.starwars.domain.repositories.PlanetsRepository;
 
@@ -16,31 +21,55 @@ public class PlanetsService {
 	@Autowired
 	PlanetsRepository planetsRepository;
 	
-	public Flux<PlanetsModel> findAll(){
+	@Autowired
+	private WebClient webClientSwapi;
+	
+	@Value("${app.swapi.planets}")
+	private String URI;
+	
+	public Flux<PlanetsResumeModel> findAll(){
 		return planetsRepository.findAll()
-				.map(AppUtils::entityToModel);
+				.map(AppUtils::entityToResumeModel);
 	}
 	
 	public Mono<PlanetsModel> findById(String id){
 		return planetsRepository.findById(id)
-				.map(AppUtils::entityToModel);
+				.map(AppUtils::entityToModel)
+				.doOnNext(p -> p.setFilmsCount(findPlanetsSwapi(p.getSwapi_id())
+						.block()
+						.getFilms()
+						.size()));
 	}
 	
-	public Mono<PlanetsModel> create(Mono<PlanetsModel> planetModel){
-		return planetModel.map(AppUtils::modelToEntity)
+	public Flux<PlanetsResumeModel> findByName(String name){
+		return planetsRepository.findByNameContainsIgnoreCase(name)
+				.map(AppUtils::entityToResumeModel);
+	}
+	
+	public Mono<PlanetsResumeModel> create(Mono<PlanetsResumeModel> planetResumeModel){
+		return planetResumeModel.map(AppUtils::resumeModelToEntity)
 				.flatMap(planetsRepository::insert)
-				.map(AppUtils::entityToModel);
+				.map(AppUtils::entityToResumeModel);
 	}
 	
-	public Mono<PlanetsModel> update(Mono<PlanetsModel> planetModel, String id){
+	public Mono<PlanetsResumeModel> update(Mono<PlanetsResumeModel> planetResumeModel, String id){
 		return planetsRepository.findById(id)
-				.flatMap(p -> planetModel.map(AppUtils::modelToEntity)
+				.flatMap(p -> planetResumeModel.map(AppUtils::resumeModelToEntity)
 						.doOnNext(e -> e.setId(id)))
 				.flatMap(planetsRepository::save)
-				.map(AppUtils::entityToModel);
+				.map(AppUtils::entityToResumeModel);
 	}
 	
 	public Mono<Void> delete(String id){
 		return planetsRepository.deleteById(id);
+	}
+	
+	private Mono<PlanetsSwapiModel> findPlanetsSwapi(int planetId) {
+		return this.webClientSwapi
+				.method(HttpMethod.GET)
+				.uri(URI + "/{patientId}", planetId)
+				.retrieve()
+				.bodyToMono(PlanetsSwapiModel.class)
+				.log();
 	}
 }
