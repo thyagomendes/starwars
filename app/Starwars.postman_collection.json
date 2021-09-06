@@ -1,0 +1,151 @@
+{
+	"info": {
+		"_postman_id": "abffcdd9-8748-413e-9e51-4eda11c1ff38",
+		"name": "Starwars",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Planets",
+			"item": [
+				{
+					"name": "findAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/planets/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"planets",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "findByName",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/planets?search=a",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"planets"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "findById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/planets/613346d5318644f2b6d51b19",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"planets",
+								"613346d5318644f2b6d51b19"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/planets/6133573afbce0a37b2b34ef3",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"planets",
+								"6133573afbce0a37b2b34ef3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "save",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"swapi_id\": 3,\r\n\"name\": \"Yavin IV\",\r\n\"climate\": \"temperate, tropical\",\r\n\"terrain\": \"jungle, rainforests\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/planets/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"planets",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"swapi_id\": 4,\r\n\"name\": \"Yavin IV2\",\r\n\"climate\": \"temperate, tropical2\",\r\n\"terrain\": \"jungle, rainforests2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/planets/6134abd60db17c6c4672571d",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"planets",
+								"6134abd60db17c6c4672571d"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
