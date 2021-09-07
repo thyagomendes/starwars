@@ -10,6 +10,7 @@ import com.americanas.starwars.api.models.PlanetsModel;
 import com.americanas.starwars.api.models.PlanetsResumeModel;
 import com.americanas.starwars.api.models.PlanetsSwapiModel;
 import com.americanas.starwars.api.utils.AppUtils;
+import com.americanas.starwars.domain.exception.PlanetsNotFoundException;
 import com.americanas.starwars.domain.repositories.PlanetsRepository;
 
 import reactor.core.publisher.Flux;
@@ -17,7 +18,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class PlanetsService {
-
+	
 	@Autowired
 	PlanetsRepository planetsRepository;
 	
@@ -26,7 +27,7 @@ public class PlanetsService {
 	
 	@Value("${app.swapi.planets}")
 	private String URI;
-	
+
 	public Flux<PlanetsResumeModel> findAll(){
 		return planetsRepository.findAll()
 				.map(AppUtils::entityToResumeModel);
@@ -34,6 +35,7 @@ public class PlanetsService {
 	
 	public Mono<PlanetsModel> findById(String id){
 		return planetsRepository.findById(id)
+				.switchIfEmpty(Mono.error(new PlanetsNotFoundException(id)))
 				.map(AppUtils::entityToModel)
 				.flatMap(planetsModel -> findPlanetsSwapi(planetsModel.getSwapi_id())
 						.doOnNext(planetsSwApi -> planetsModel.setFilmsCount(planetsSwApi.getFilms().size()))
@@ -53,6 +55,7 @@ public class PlanetsService {
 	
 	public Mono<PlanetsResumeModel> update(Mono<PlanetsResumeModel> planetResumeModel, String id){
 		return planetsRepository.findById(id)
+				.switchIfEmpty(Mono.error(new PlanetsNotFoundException(id)))
 				.flatMap(p -> planetResumeModel.map(AppUtils::resumeModelToEntity)
 						.doOnNext(planets -> planets.setId(id)))
 				.flatMap(planetsRepository::save)
@@ -60,15 +63,16 @@ public class PlanetsService {
 	}
 	
 	public Mono<Void> delete(String id){
-		return planetsRepository.deleteById(id);
+		return planetsRepository.findById(id)
+				.switchIfEmpty(Mono.error(new PlanetsNotFoundException(id)))
+				.flatMap(p -> planetsRepository.deleteById(id));
 	}
 	
 	private Mono<PlanetsSwapiModel> findPlanetsSwapi(int planetId) {
 		return this.webClientSwapi
 				.method(HttpMethod.GET)
-				.uri(URI + "/{patientId}", planetId)
+				.uri(URI + "/{planetId}", planetId)
 				.retrieve()
-				.bodyToMono(PlanetsSwapiModel.class)
-				.log();
+				.bodyToMono(PlanetsSwapiModel.class);
 	}
 }

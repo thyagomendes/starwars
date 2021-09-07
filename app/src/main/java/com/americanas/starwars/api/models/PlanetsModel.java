@@ -1,21 +1,28 @@
 package com.americanas.starwars.api.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor  
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Builder
 public class PlanetsModel {
 
 	private String id;
+	@NotNull
+	@Min(value = 1)
 	private int swapi_id;
+	@NotNull
 	private String name;
+	@NotNull
 	private String climate;
+	@NotNull
 	private String terrain;
 	private int filmsCount;
 }

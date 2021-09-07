@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AmericanasStarwarsApplication {
 
 	public static void main(String[] args) {
-	    SpringApplication springApplication = new SpringApplication(AmericanasStarwarsApplication.class);
-	    springApplication.setWebApplicationType(WebApplicationType.REACTIVE);
-	    springApplication.run(args);
+		SpringApplication springApplication = new SpringApplication(AmericanasStarwarsApplication.class);
+		springApplication.setWebApplicationType(WebApplicationType.REACTIVE);
+		springApplication.run(args);
 	}
 }
