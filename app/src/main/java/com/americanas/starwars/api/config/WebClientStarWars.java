@@ -12,9 +12,10 @@ public class WebClientStarWars {
 	private String swapiPath;
 	
 	@Bean
-	public WebClient webClientPatient(WebClient.Builder builder) {
+	public WebClient webClientSwApi(WebClient.Builder builder) {
 		return builder
 			.baseUrl(swapiPath)
 			.build();
 	}
+
 }

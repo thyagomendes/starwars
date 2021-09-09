@@ -22,35 +22,38 @@ public class PlanetsService {
 	@Autowired
 	PlanetsRepository planetsRepository;
 	
-	@Autowired
-	private WebClient webClientSwapi;
-	
 	@Value("${app.swapi.planets}")
 	private String URI;
+	
+	@Value("${app.swapi.rootPath}")
+	private String swapiPath;
+
+//	@Autowired
+	private WebClient webClientSwApi;
 
 	public Flux<PlanetsResumeModel> findAll(){
 		return planetsRepository.findAll()
-				.map(AppUtils::entityToResumeModel);
+				.flatMap(planets -> Mono.just(AppUtils.entityToResumeModel(planets)));
 	}
 	
 	public Mono<PlanetsModel> findById(String id){
 		return planetsRepository.findById(id)
 				.switchIfEmpty(Mono.error(new PlanetsNotFoundException(id)))
-				.map(AppUtils::entityToModel)
+				.flatMap(planets -> Mono.just(AppUtils.entityToModel(planets)))
 				.flatMap(planetsModel -> findPlanetsSwapi(planetsModel.getSwapi_id())
 						.doOnNext(planetsSwApi -> planetsModel.setFilmsCount(planetsSwApi.getFilms().size()))
-						.map(planetsSwApi -> planetsModel ));
+						.map(planetsSwApi -> planetsModel));
 	}
 	
 	public Flux<PlanetsResumeModel> findByName(String name){
 		return planetsRepository.findByNameContainsIgnoreCase(name)
-				.map(AppUtils::entityToResumeModel);
+				.flatMap(planets -> Mono.just(AppUtils.entityToResumeModel(planets)));
 	}
 	
 	public Mono<PlanetsResumeModel> create(Mono<PlanetsResumeModel> planetResumeModel){
 		return planetResumeModel.map(AppUtils::resumeModelToEntity)
 				.flatMap(planetsRepository::insert)
-				.map(AppUtils::entityToResumeModel);
+				.flatMap(planets -> Mono.just(AppUtils.entityToResumeModel(planets)));
 	}
 	
 	public Mono<PlanetsResumeModel> update(Mono<PlanetsResumeModel> planetResumeModel, String id){
@@ -59,7 +62,7 @@ public class PlanetsService {
 				.flatMap(p -> planetResumeModel.map(AppUtils::resumeModelToEntity)
 						.doOnNext(planets -> planets.setId(id)))
 				.flatMap(planetsRepository::save)
-				.map(AppUtils::entityToResumeModel);
+				.flatMap(planets -> Mono.just(AppUtils.entityToResumeModel(planets)));
 	}
 	
 	public Mono<Void> delete(String id){
@@ -69,7 +72,8 @@ public class PlanetsService {
 	}
 	
 	private Mono<PlanetsSwapiModel> findPlanetsSwapi(int planetId) {
-		return this.webClientSwapi
+//		this.webClientSwApi = WebClient.create(swapiPath);
+		return WebClient.create(swapiPath)
 				.method(HttpMethod.GET)
 				.uri(URI + "/{planetId}", planetId)
 				.retrieve()

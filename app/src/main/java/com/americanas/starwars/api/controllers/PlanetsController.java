@@ -1,13 +1,10 @@
 package com.americanas.starwars.api.controllers;
 
-import java.util.concurrent.CompletableFuture;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.americanas.starwars.api.models.PlanetsModel;
 import com.americanas.starwars.api.models.PlanetsResumeModel;
-import com.americanas.starwars.domain.exception.EntityInUseException;
 import com.americanas.starwars.domain.exception.EntityNotFoundException;
-import com.americanas.starwars.domain.exception.PlanetsNotFoundException;
 import com.americanas.starwars.domain.services.PlanetsService;
 
 import reactor.core.publisher.Flux;
